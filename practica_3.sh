@@ -22,12 +22,14 @@ else
 			if id "$idus" >/dev/null 2>&1
 			then
 				usermod -L "$idus"
-				dirhom="$HOME"
-				if tar -c -f "/extra/backup/$iduser.tar" "$dirhom" >/dev/null 2>&1
+				dirhom=  /bin/cat /etc/passwd | grep "$idus" | cut -d ':' -f 6 | tail -1
+				if tar -cf "/extra/backup/$iduser.tar $dirhom" >/dev/null 2>&1
 				then
 					userdel -r -f "$idus">/dev/null 2>&1
+					echo "echo"
 				else
-					usermod -U "$idus"
+					usermod -U "$idus"> /dev/null 2>&1
+					echo -n "$dirhom"
 				fi
 			fi
 		done
@@ -46,7 +48,7 @@ else
 			fi
 			if id "$idus" >/dev/null 2>&1
 			then
-				echo "Usuario $idus ya existe"
+				echo "El usuario $idus ya existe"
 				exit 1
 			fi
 			useradd -m -k /etc/skel -U -f 30 -K UID_MIN=1815 -c "$nombre" "$idus"
