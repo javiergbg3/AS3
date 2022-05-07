@@ -1,4 +1,6 @@
 #!/bin/bash
+#815579, Gonzalez Blanco, Javier, [T], [1], [B]
+#815579, García Rodríeguez, Alex, [T], [1], [B]
 if [[ $(id -u) -ne 0 ]]
 then
 	echo "Este script necesita privilegios de administracion"
@@ -19,17 +21,16 @@ else
 		cat "$2" |
 		while read idus ig
 		do
-			if id "$idus" >/dev/null 2>&1
+			if id "$idus">/dev/null 2>&1
 			then
 				usermod -L "$idus"
-				dirhom=  /bin/cat /etc/passwd | grep "$idus" | cut -d ':' -f 6 | tail -1
-				if tar -cf "/extra/backup/$iduser.tar $dirhom" >/dev/null 2>&1
+				dirhom=$(grep "$idus" /etc/passwd | cut -d: -f6)
+				tar czvf "/extra/backup/$idus.tar" "$dirhom">/dev/null 2>&1
+				if [ "$?" = 0 ]
 				then
 					userdel -r -f "$idus">/dev/null 2>&1
-					echo "echo"
 				else
-					usermod -U "$idus"> /dev/null 2>&1
-					echo -n "$dirhom"
+					usermod -U "$idus" 2>/dev/null
 				fi
 			fi
 		done
